@@ -524,3 +524,13 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
 - (void)autoRemove;
 
 @end
+
+@interface UIViewController (AutoLayoutHelper)
+
+/**
+ *	Constraint (set) topLayoutGuide, sets constraints that will make topLayoutGuide a given length, removes any exisiting constraints on the topLayoutGuide
+ *
+ *	@param	length	length to set (constraint) topLayoutGuide to
+ */
+- (void) constraintTopLayoutGuideToLength:(CGFloat)length;
+@end

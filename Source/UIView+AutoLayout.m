@@ -1214,3 +1214,21 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
 }
 
 @end
+
+@implementation UIViewController (AutoLayoutHelper)
+
+- (void) constraintTopLayoutGuideToLength:(CGFloat)length {
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.topLayoutGuide attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual
+                                                                     toItem:nil attribute:NSLayoutAttributeNotAnAttribute
+                                                                 multiplier:1. constant:length];
+    NSArray *constraints = [self.view constraints];
+    for (NSLayoutConstraint *c in constraints) {
+        if (c.firstItem == self.topLayoutGuide && c.firstAttribute == NSLayoutAttributeHeight) {
+            [self.view removeConstraint:c];
+            break;
+        }
+    }
+    [self.view addConstraint:constraint];
+}
+
+@end
