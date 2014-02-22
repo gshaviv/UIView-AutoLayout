@@ -45,10 +45,10 @@ typedef NS_ENUM(NSInteger, ALDimension) {
     ALDimensionHeight = NSLayoutAttributeHeight     // the height of the view
 };
 
-typedef NS_ENUM(NSInteger, ALAxis) {
-    ALAxisVertical = NSLayoutAttributeCenterX,      // a vertical line through the center of the view
-    ALAxisHorizontal = NSLayoutAttributeCenterY,    // a horizontal line through the center of the view
-    ALAxisBaseline = NSLayoutAttributeBaseline      // a horizontal line at the text baseline (not applicable to all views)
+typedef NS_ENUM(NSInteger, ALAttribute) {
+    ALAttributeCenterX = NSLayoutAttributeCenterX,      // a vertical line through the center of the view
+    ALAttributeCenterY = NSLayoutAttributeCenterY,    // a horizontal line through the center of the view
+    ALAttributeBaseline = NSLayoutAttributeBaseline      // a horizontal line at the text baseline (not applicable to all views)
 };
 
 typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UIView+AutoLayout category API
@@ -160,7 +160,7 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
  @param axis The axis of this view and of its superview to align.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoAlignAxisToSuperviewAxis:(ALAxis)axis;
+- (NSLayoutConstraint *)autoAlignAxisToSuperviewAxis:(ALAttribute)axis;
 
 #pragma mark Pin Edges to Superview
 
@@ -237,7 +237,7 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
  @param peerView The peer view to align to. Must be in the same view hierarchy as this view.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoAlignAxis:(ALAxis)axis toSameAxisOfView:(UIView *)peerView;
+- (NSLayoutConstraint *)autoAlignAxis:(ALAttribute)axis toSameAxisOfView:(UIView *)peerView;
 
 /**
  Aligns an axis of the view to the same axis of another view with an offset.
@@ -247,7 +247,7 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
  @param offset The offset between the axis of this view and the axis of the peer view.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoAlignAxis:(ALAxis)axis toSameAxisOfView:(UIView *)peerView withOffset:(CGFloat)offset;
+- (NSLayoutConstraint *)autoAlignAxis:(ALAttribute)axis toSameAxisOfView:(UIView *)peerView withOffset:(CGFloat)offset;
 
 
 #pragma mark Match Dimensions
@@ -431,9 +431,9 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
 #pragma mark Deprecated API Methods
 
 
-- (NSLayoutConstraint *)autoCenterInSuperviewAlongAxis:(ALAxis)axis __attribute__((deprecated));
+- (NSLayoutConstraint *)autoCenterInSuperviewAlongAxis:(ALAttribute)axis __attribute__((deprecated));
 
-- (NSLayoutConstraint *)autoPinCenterAxis:(ALAxis)axis toPositionInSuperview:(CGFloat)value __attribute__((deprecated));
+- (NSLayoutConstraint *)autoPinCenterAxis:(ALAttribute)axis toPositionInSuperview:(CGFloat)value __attribute__((deprecated));
 
 - (NSLayoutConstraint *)autoPinEdge:(ALEdge)edge toPositionInSuperview:(CGFloat)value __attribute__((deprecated));
 
@@ -464,7 +464,7 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
  @param axis The axis to which to subviews will be aligned.
  @return An array of constraints added.
  */
-- (NSArray *)autoAlignViewsToAxis:(ALAxis)axis;
+- (NSArray *)autoAlignViewsToAxis:(ALAttribute)axis;
 
 /**
  Matches a given dimension of all the views in this array.
@@ -497,7 +497,7 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
  @param alignment The way in which the subviews will be aligned.
  @return An array of constraints added.
  */
-- (NSArray *)autoDistributeViewsAlongAxis:(ALAxis)axis withFixedSpacing:(CGFloat)spacing alignment:(NSLayoutFormatOptions)alignment;
+- (NSArray *)autoDistributeViewsAlongAxis:(ALAttribute)axis withFixedSpacing:(CGFloat)spacing alignment:(NSLayoutFormatOptions)alignment;
 
 /**
  Distributes the views in this array equally along the selected axis in their superview.
@@ -508,7 +508,7 @@ typedef void(^ALConstraintsBlock)(void);    // a block of method calls to the UI
  @param alignment The way in which the subviews will be aligned.
  @return An array of constraints added.
  */
-- (NSArray *)autoDistributeViewsAlongAxis:(ALAxis)axis withFixedSize:(CGFloat)size alignment:(NSLayoutFormatOptions)alignment;
+- (NSArray *)autoDistributeViewsAlongAxis:(ALAttribute)axis withFixedSize:(CGFloat)size alignment:(NSLayoutFormatOptions)alignment;
 
 @end
 

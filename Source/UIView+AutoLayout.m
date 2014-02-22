@@ -210,8 +210,8 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
 - (NSArray *)autoCenterInSuperview
 {
     NSMutableArray *constraints = [NSMutableArray new];
-    [constraints addObject:[self autoAlignAxisToSuperviewAxis:ALAxisHorizontal]];
-    [constraints addObject:[self autoAlignAxisToSuperviewAxis:ALAxisVertical]];
+    [constraints addObject:[self autoAlignAxisToSuperviewAxis:ALAttributeCenterY]];
+    [constraints addObject:[self autoAlignAxisToSuperviewAxis:ALAttributeCenterX]];
     return constraints;
 }
 
@@ -221,7 +221,7 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param axis The axis of this view and of its superview to align.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoAlignAxisToSuperviewAxis:(ALAxis)axis
+- (NSLayoutConstraint *)autoAlignAxisToSuperviewAxis:(ALAttribute)axis
 {
     UIView *superview = self.superview;
     NSAssert(superview, @"View's superview must not be nil.\nView: %@", self);
@@ -348,7 +348,7 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param peerView The peer view to align to. Must be in the same view hierarchy as this view.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoAlignAxis:(ALAxis)axis toSameAxisOfView:(UIView *)peerView
+- (NSLayoutConstraint *)autoAlignAxis:(ALAttribute)axis toSameAxisOfView:(UIView *)peerView
 {
     return [self autoAlignAxis:axis toSameAxisOfView:peerView withOffset:0.0f];
 }
@@ -361,7 +361,7 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param offset The offset between the axis of this view and the axis of the peer view.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoAlignAxis:(ALAxis)axis toSameAxisOfView:(UIView *)peerView withOffset:(CGFloat)offset
+- (NSLayoutConstraint *)autoAlignAxis:(ALAttribute)axis toSameAxisOfView:(UIView *)peerView withOffset:(CGFloat)offset
 {
     UIView *superview = [self al_commonSuperviewWithView:peerView];
     NSLayoutAttribute attribute = [UIView al_attributeForAxis:axis];
@@ -643,7 +643,7 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param axis The axis of this view and of its superview to center on.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoCenterInSuperviewAlongAxis:(ALAxis)axis
+- (NSLayoutConstraint *)autoCenterInSuperviewAlongAxis:(ALAttribute)axis
 {
     return [self autoAlignAxisToSuperviewAxis:axis];
 }
@@ -657,13 +657,13 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param value The x (if horizontal axis) or y (if vertical axis) absolute position in the superview to pin this view at.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)autoPinCenterAxis:(ALAxis)axis toPositionInSuperview:(CGFloat)value
+- (NSLayoutConstraint *)autoPinCenterAxis:(ALAttribute)axis toPositionInSuperview:(CGFloat)value
 {
     UIView *superview = self.superview;
     NSAssert(superview, @"View's superview must not be nil.\nView: %@", self);
     NSLayoutAttribute attribute = [UIView al_attributeForAxis:axis];
     NSLayoutConstraint *constraint = nil;
-    if (axis == ALAxisVertical) {
+    if (axis == ALAttributeCenterX) {
         constraint = [NSLayoutConstraint constraintWithItem:self attribute:attribute relatedBy:NSLayoutRelationEqual toItem:superview attribute:NSLayoutAttributeLeft multiplier:1.0f constant:value];
     }
     else {
@@ -763,17 +763,17 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  
  @return The layout attribute for the given axis.
  */
-+ (NSLayoutAttribute)al_attributeForAxis:(ALAxis)axis
++ (NSLayoutAttribute)al_attributeForAxis:(ALAttribute)axis
 {
     NSLayoutAttribute attribute = NSLayoutAttributeNotAnAttribute;
     switch (axis) {
-        case ALAxisVertical:
+        case ALAttributeCenterX:
             attribute = NSLayoutAttributeCenterX;
             break;
-        case ALAxisHorizontal:
+        case ALAttributeCenterY:
             attribute = NSLayoutAttributeCenterY;
             break;
-        case ALAxisBaseline:
+        case ALAttributeBaseline:
             attribute = NSLayoutAttributeBaseline;
             break;
         default:
@@ -833,13 +833,13 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
         case ALDimensionHeight:
             attribute = NSLayoutAttributeHeight;
             break;
-        case ALAxisVertical:
+        case ALAttributeCenterX:
             attribute = NSLayoutAttributeCenterX;
             break;
-        case ALAxisHorizontal:
+        case ALAttributeCenterY:
             attribute = NSLayoutAttributeCenterY;
             break;
-        case ALAxisBaseline:
+        case ALAttributeBaseline:
             attribute = NSLayoutAttributeBaseline;
             break;
         default:
@@ -877,44 +877,44 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param axis The axis along which the views are distributed, used to validate the alignment option.
  @return The constraint added.
  */
-- (NSLayoutConstraint *)al_alignToView:(UIView *)peerView withOption:(NSLayoutFormatOptions)alignment forAxis:(ALAxis)axis
+- (NSLayoutConstraint *)al_alignToView:(UIView *)peerView withOption:(NSLayoutFormatOptions)alignment forAxis:(ALAttribute)axis
 {
     NSLayoutConstraint *constraint = nil;
     switch (alignment) {
         case NSLayoutFormatAlignAllCenterX:
-            NSAssert(axis == ALAxisVertical, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllCenterX.");
-            constraint = [self autoAlignAxis:ALAxisVertical toSameAxisOfView:peerView];
+            NSAssert(axis == ALAttributeCenterX, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllCenterX.");
+            constraint = [self autoAlignAxis:ALAttributeCenterX toSameAxisOfView:peerView];
             break;
         case NSLayoutFormatAlignAllCenterY:
-            NSAssert(axis != ALAxisVertical, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllCenterY.");
-            constraint = [self autoAlignAxis:ALAxisHorizontal toSameAxisOfView:peerView];
+            NSAssert(axis != ALAttributeCenterX, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllCenterY.");
+            constraint = [self autoAlignAxis:ALAttributeCenterY toSameAxisOfView:peerView];
             break;
         case NSLayoutFormatAlignAllBaseline:
-            NSAssert(axis != ALAxisVertical, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllBaseline.");
-            constraint = [self autoAlignAxis:ALAxisBaseline toSameAxisOfView:peerView];
+            NSAssert(axis != ALAttributeCenterX, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllBaseline.");
+            constraint = [self autoAlignAxis:ALAttributeBaseline toSameAxisOfView:peerView];
             break;
         case NSLayoutFormatAlignAllTop:
-            NSAssert(axis != ALAxisVertical, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllTop.");
+            NSAssert(axis != ALAttributeCenterX, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllTop.");
             constraint = [self autoPinEdge:ALEdgeTop toEdge:ALEdgeTop ofView:peerView];
             break;
         case NSLayoutFormatAlignAllLeft:
-            NSAssert(axis == ALAxisVertical, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllLeft.");
+            NSAssert(axis == ALAttributeCenterX, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllLeft.");
             constraint = [self autoPinEdge:ALEdgeLeft toEdge:ALEdgeLeft ofView:peerView];
             break;
         case NSLayoutFormatAlignAllBottom:
-            NSAssert(axis != ALAxisVertical, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllBottom.");
+            NSAssert(axis != ALAttributeCenterX, @"Cannot align views that are distributed vertically with NSLayoutFormatAlignAllBottom.");
             constraint = [self autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:peerView];
             break;
         case NSLayoutFormatAlignAllRight:
-            NSAssert(axis == ALAxisVertical, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllRight.");
+            NSAssert(axis == ALAttributeCenterX, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllRight.");
             constraint = [self autoPinEdge:ALEdgeRight toEdge:ALEdgeRight ofView:peerView];
             break;
         case NSLayoutFormatAlignAllLeading:
-            NSAssert(axis == ALAxisVertical, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllLeading.");
+            NSAssert(axis == ALAttributeCenterX, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllLeading.");
             constraint = [self autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:peerView];
             break;
         case NSLayoutFormatAlignAllTrailing:
-            NSAssert(axis == ALAxisVertical, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllTrailing.");
+            NSAssert(axis == ALAttributeCenterX, @"Cannot align views that are distributed horizontally with NSLayoutFormatAlignAllTrailing.");
             constraint = [self autoPinEdge:ALEdgeTrailing toEdge:ALEdgeTrailing ofView:peerView];
             break;
         default:
@@ -965,7 +965,7 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param axis The axis to which to subviews will be aligned.
  @return An array of constraints added.
  */
-- (NSArray *)autoAlignViewsToAxis:(ALAxis)axis
+- (NSArray *)autoAlignViewsToAxis:(ALAttribute)axis
 {
     NSAssert([self al_containsMinimumNumberOfViews:2], @"This array must contain at least 2 views.");
     NSMutableArray *constraints = [NSMutableArray new];
@@ -1039,19 +1039,19 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param alignment The way in which the subviews will be aligned.
  @return An array of constraints added.
  */
-- (NSArray *)autoDistributeViewsAlongAxis:(ALAxis)axis withFixedSpacing:(CGFloat)spacing alignment:(NSLayoutFormatOptions)alignment
+- (NSArray *)autoDistributeViewsAlongAxis:(ALAttribute)axis withFixedSpacing:(CGFloat)spacing alignment:(NSLayoutFormatOptions)alignment
 {
     NSAssert([self al_containsMinimumNumberOfViews:2], @"This array must contain at least 2 views to distribute.");
     ALDimension matchedDimension;
     ALEdge firstEdge, lastEdge;
     switch (axis) {
-        case ALAxisHorizontal:
-        case ALAxisBaseline:
+        case ALAttributeCenterY:
+        case ALAttributeBaseline:
             matchedDimension = ALDimensionWidth;
             firstEdge = ALEdgeLeading;
             lastEdge = ALEdgeTrailing;
             break;
-        case ALAxisVertical:
+        case ALAttributeCenterX:
             matchedDimension = ALDimensionHeight;
             firstEdge = ALEdgeTop;
             lastEdge = ALEdgeBottom;
@@ -1092,18 +1092,18 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
  @param alignment The way in which the subviews will be aligned.
  @return An array of constraints added.
  */
-- (NSArray *)autoDistributeViewsAlongAxis:(ALAxis)axis withFixedSize:(CGFloat)size alignment:(NSLayoutFormatOptions)alignment
+- (NSArray *)autoDistributeViewsAlongAxis:(ALAttribute)axis withFixedSize:(CGFloat)size alignment:(NSLayoutFormatOptions)alignment
 {
     NSAssert([self al_containsMinimumNumberOfViews:2], @"This array must contain at least 2 views to distribute.");
     ALDimension fixedDimension;
     NSLayoutAttribute attribute;
     switch (axis) {
-        case ALAxisHorizontal:
-        case ALAxisBaseline:
+        case ALAttributeCenterY:
+        case ALAttributeBaseline:
             fixedDimension = ALDimensionWidth;
             attribute = NSLayoutAttributeCenterX;
             break;
-        case ALAxisVertical:
+        case ALAttributeCenterX:
             fixedDimension = ALDimensionHeight;
             attribute = NSLayoutAttributeCenterY;
             break;
@@ -1112,7 +1112,7 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
             return nil;
     }
     BOOL isRightToLeftLanguage = [NSLocale characterDirectionForLanguage:[[NSBundle mainBundle] preferredLocalizations][0]] == NSLocaleLanguageDirectionRightToLeft;
-    BOOL shouldFlipOrder = isRightToLeftLanguage && (axis != ALAxisVertical); // imitate the effect of leading/trailing when distributing horizontally
+    BOOL shouldFlipOrder = isRightToLeftLanguage && (axis != ALAttributeCenterX); // imitate the effect of leading/trailing when distributing horizontally
     
     NSMutableArray *constraints = [NSMutableArray new];
     NSArray *views = [self al_copyViewsOnly];
@@ -1218,9 +1218,7 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
 @implementation UIViewController (AutoLayoutHelper)
 
 - (void) constraintTopLayoutGuideToLength:(CGFloat)length {
-    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.topLayoutGuide attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual
-                                                                     toItem:nil attribute:NSLayoutAttributeNotAnAttribute
-                                                                 multiplier:1. constant:length];
+    if (self.topLayoutGuide) {
     NSArray *constraints = [self.view constraints];
     for (NSLayoutConstraint *c in constraints) {
         if (c.firstItem == self.topLayoutGuide && c.firstAttribute == NSLayoutAttributeHeight) {
@@ -1228,7 +1226,12 @@ static UILayoutPriority _globalConstraintPriority = UILayoutPriorityRequired;
             break;
         }
     }
+    NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self.topLayoutGuide attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual
+                                                                     toItem:nil attribute:NSLayoutAttributeNotAnAttribute
+                                                                 multiplier:1. constant:length];
+
     [self.view addConstraint:constraint];
+    }
 }
 
 @end
